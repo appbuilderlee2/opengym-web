@@ -245,6 +245,7 @@ const clone = o => JSON.parse(JSON.stringify(o))
 // pre-paint direction. The choice is persisted like any other setting once the user
 // picks a language.
 const detectedLang = () => {
+  if (import.meta.env.VITE_WEB_LOCAL === '1') return 'zh-TW'
   try {
     const base = (navigator.language || '').toLowerCase().split('-')[0]
     if (RTL_LANGS.has(base)) return base
@@ -259,7 +260,7 @@ const detectedLang = () => {
 export function freshState() {
   const s = clone(DEF)
   s.lang = detectedLang()
-  s.langAuto = true
+  s.langAuto = import.meta.env.VITE_WEB_LOCAL !== '1'
   s.weighIn = false
   // Exercise animations: Small (v1.3.11), a thumbnail beside the exercise name that a tap opens,
   // so the first set is on screen without scrolling. DEF stays 'full' for a profile saved before.
