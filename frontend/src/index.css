@@ -2156,3 +2156,22 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .bw-actions{display:flex;gap:8px}
 .bw-actions button{flex:1;border:0;min-height:43px;border-radius:10px;background:var(--surface-2);color:var(--label);font:inherit;font-weight:600}
 .bw-actions button:first-child{background:var(--acc);color:var(--on-acc)}
+
+
+/* Local bodyweight programme entry and generator */
+.bw-generator{margin:10px 0 18px;border-radius:var(--r-card);background:var(--surface);overflow:hidden}
+.bw-generator-entry{width:100%;min-height:78px;display:flex;align-items:center;gap:13px;text-align:left;background:transparent;border:0;color:var(--label);font:inherit;padding:14px 16px}
+.bw-entry-icon{font-size:27px;flex-shrink:0}
+.bw-entry-copy{flex:1;min-width:0;display:grid;gap:4px}
+.bw-entry-copy strong{font-size:16px;font-weight:650}
+.bw-entry-copy small{font-size:12px;color:var(--label-2)}
+.bw-generator-body{padding:4px 16px 18px;border-top:1px solid var(--sep-op);display:grid;gap:14px}
+.bw-generator-body p{margin:8px 0 0;font-size:13px;color:var(--label-2);line-height:1.55}
+.bw-generator-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.bw-generator-choice{display:grid;gap:6px;font-size:12px;color:var(--label-2)}
+.bw-generator-choice select{width:100%;max-width:100%;min-height:42px;border-radius:10px;border:1px solid var(--sep-op);background:var(--surface-2);color:var(--label);padding:8px;font:inherit;font-size:14px}
+.bw-generator-check{display:flex;gap:10px;align-items:flex-start;font-size:12px;line-height:1.45;color:var(--label)}
+.bw-generator-check input{accent-color:var(--acc);margin-top:2px}
+.bw-generator-body .bw-generator-help{margin:0;font-size:11px;color:var(--label-3)}
+.bw-create{min-height:46px;width:100%;border:0;border-radius:11px;background:var(--acc);color:var(--on-acc);font:inherit;font-weight:650}
+.bw-generator-message{padding:0 16px 13px;font-size:12px;color:var(--label-2)}
