@@ -16,6 +16,8 @@ import { NUDGE_COPY, lineIndex, nudgeFor, nudgeMinute, toneOf } from './nudge.js
 import { excusedOn } from './day-notes.js'
 
 export const MOBILE = import.meta.env.VITE_MOBILE === '1'
+export const WEB_LOCAL = import.meta.env.VITE_WEB_LOCAL === '1'
+const webFile = () => import('./web-local-storage.js')
 
 // Some features only make sense on Android. The in-app updater downloads an .apk and hands it
 // to the system package installer — there is no equivalent on iOS (App Store only) or on the
@@ -36,6 +38,7 @@ export async function isAndroid() {
 const FILE = 'opengym-state.json'
 
 export async function nativeLoad() {
+  if (WEB_LOCAL) return (await webFile()).readLocalFile(FILE)
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
     const r = await Filesystem.readFile({ path: FILE, directory: Directory.Data, encoding: Encoding.UTF8 })
@@ -44,6 +47,7 @@ export async function nativeLoad() {
 }
 
 export async function nativeSave(state) {
+  if (WEB_LOCAL) return (await webFile()).writeLocalFile(FILE, state)
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
     await Filesystem.writeFile({ path: FILE, directory: Directory.Data, data: JSON.stringify(state), encoding: Encoding.UTF8 })
@@ -59,6 +63,7 @@ const REMOTE_FILE = 'opengym-remote.json'
 // Small JSON files in the app's private data directory, for device facts that must not ride
 // in S (which syncs and exports): the pairing, and how the Coach runs on this phone.
 export async function readJsonFile(name) {
+  if (WEB_LOCAL) return (await webFile()).readLocalFile(name)
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
     const r = await Filesystem.readFile({ path: name, directory: Directory.Data, encoding: Encoding.UTF8 })
@@ -66,6 +71,7 @@ export async function readJsonFile(name) {
   } catch (e) { return null }
 }
 export async function writeJsonFile(name, data) {
+  if (WEB_LOCAL) return (await webFile()).writeLocalFile(name, data)
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
     await Filesystem.writeFile({ path: name, directory: Directory.Data, data: JSON.stringify(data), encoding: Encoding.UTF8 })
@@ -73,6 +79,7 @@ export async function writeJsonFile(name, data) {
 }
 
 export async function loadRemoteFile() {
+  if (WEB_LOCAL) return { mode: 'local' }
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
     const r = await Filesystem.readFile({ path: REMOTE_FILE, directory: Directory.Data, encoding: Encoding.UTF8 })
@@ -81,6 +88,7 @@ export async function loadRemoteFile() {
 }
 
 export async function saveRemoteFile(data) {
+  if (WEB_LOCAL) return // Static PWA never stores a server pairing
   try {
     const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem')
     await Filesystem.writeFile({ path: REMOTE_FILE, directory: Directory.Data, data: JSON.stringify(data), encoding: Encoding.UTF8 })
