@@ -40,7 +40,7 @@ export default function BodyweightGenerator({ S, update, nav }) {
   return <section className="bw-generator">
     <button className="bw-generator-entry" type="button" onClick={() => setOpen(v => !v)} aria-expanded={open}>
       <span className="bw-entry-icon" aria-hidden="true">🔥</span>
-      <span className="bw-entry-copy"><strong>徒手減脂計劃</strong><small>毋須器械 · 8 星期建議課表 · 自訂難度</small></span>
+      <span className="bw-entry-copy"><strong>徒手減脂計劃</strong><small>毋須器械 · 自訂難度 · 每週課表</small></span>
       <span aria-hidden="true">{open ? '−' : '+'}</span>
     </button>
     {open && <div className="bw-generator-body">
