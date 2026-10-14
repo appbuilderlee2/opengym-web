@@ -19,7 +19,11 @@ function findExercise(terms) {
 }
 export function generateBodyweightPlan({ level = 'beginner', days = 4, duration = 25, impact = 'low' }, makeId) {
   const [baseSets, reps, sec] = levels[level] || levels.beginner
-  const selected = blocks.slice(0, Math.max(3, Math.min(5, Number(days) || 4)))
+  const selected = blocks.slice(0, Math.max(3, Math.min(5, Number(days) || 4))).map(block => (
+    impact === 'normal' && block.title === '低衝擊心肺'
+      ? { ...block, title: '心肺循環', movements: [['jumping jack'], ['high knees'], ['mountain climber'], ['plank']] }
+      : block
+  ))
   const approxSets = Math.max(1, Math.min(baseSets, Math.floor((Number(duration) || 25) / 8)))
   return selected.map((block, index) => {
     const entries = []
