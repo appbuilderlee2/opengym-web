@@ -15,7 +15,7 @@ const equipment = ex => String(ex.eq || ex.equipment || '').toLowerCase()
 const isBodyweight = ex => /body weight|bodyweight|none|no equipment/.test(equipment(ex)) || (!equipment(ex) && ['calisthenics', 'isometric'].includes(ex.cat))
 function findExercise(terms) {
   const found = CATALOGUE.filter(ex => terms.some(term => text(ex).includes(term)))
-  return found.find(isBodyweight) || found.find(ex => ['calisthenics', 'isometric'].includes(ex.cat)) || null
+  return found.find(isBodyweight) || null
 }
 export function generateBodyweightPlan({ level = 'beginner', days = 4, duration = 25, impact = 'low' }, makeId) {
   const [baseSets, reps, sec] = levels[level] || levels.beginner
