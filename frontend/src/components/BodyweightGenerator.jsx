@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { generateBodyweightPlan, BODYWEIGHT_DAYS } from '../lib/bodyweight-plan.js'
+import { generateBodyweightPlan, BODYWEIGHT_DAYS, BODYWEIGHT_STYLES } from '../lib/bodyweight-plan.js'
 import { uid } from '../lib/format.js'
 
 const CHOICES = { level: [['beginner','初級'],['intermediate','中級'],['advanced','進階']], days: [[3,'3 日'],[4,'4 日'],[5,'5 日']], duration: [[15,'15 分鐘'],[25,'25 分鐘'],[40,'40 分鐘']], impact: [['low','低衝擊'],['normal','一般']] }
@@ -12,10 +12,12 @@ export default function BodyweightGenerator({ S, update, nav }) {
   const [days, setDays] = useState('4')
   const [duration, setDuration] = useState('25')
   const [impact, setImpact] = useState('low')
+  const [style, setStyle] = useState('balanced')
+  const [variation, setVariation] = useState('0')
   const [replaceWeek, setReplaceWeek] = useState(false)
   const [message, setMessage] = useState('')
   const create = () => {
-    const routines = generateBodyweightPlan({ level, days: Number(days), duration: Number(duration), impact }, uid)
+    const routines = generateBodyweightPlan({ level, days: Number(days), duration: Number(duration), impact, style, variation: Number(variation) }, uid)
     if (!routines.length) {
       setMessage('暫時搵唔到合適嘅內建徒手動作，未有改動原有計劃。')
       return
@@ -46,13 +48,15 @@ export default function BodyweightGenerator({ S, update, nav }) {
     {open && <div className="bw-generator-body">
       <p>根據你嘅體能、時間同訓練日數，從 openGym 動作庫建立可編輯課表。</p>
       <div className="bw-generator-grid">
+        <Choice title="訓練類型" value={style} onChange={setStyle} options={BODYWEIGHT_STYLES} />
+        <Choice title="動作組合" value={variation} onChange={setVariation} options={[[0,"組合 A"],[1,"組合 B"],[2,"組合 C"],[3,"組合 D"],[4,"組合 E"]]} />
         <Choice title="目前體能" value={level} onChange={setLevel} options={CHOICES.level} />
         <Choice title="每星期" value={days} onChange={setDays} options={CHOICES.days} />
         <Choice title="每次時間" value={duration} onChange={setDuration} options={CHOICES.duration} />
         <Choice title="運動衝擊" value={impact} onChange={setImpact} options={CHOICES.impact} />
       </div>
       <label className="bw-generator-check"><input type="checkbox" checked={replaceWeek} onChange={e => setReplaceWeek(e.target.checked)} />取代現有每週日程（保留原有訓練動作和記錄）</label>
-      <p className="bw-generator-help">預設只加入新訓練，不刪除現有訓練。課表係可持續重複嘅起點，8 星期唔會自動改寫或延長。低衝擊模式會優先採用無跳躍動作。</p>
+      <p className="bw-generator-help">每種訓練類型提供 5 種組合，全部由原有動作庫配搭。預設不刪除舊課表；低衝擊會排除跑跳動作。實際動作以本機動作庫為準。</p>
       <button type="button" className="bw-create" onClick={create}>產生並加入我的課表</button>
     </div>}
     {message && <p className="bw-generator-message" role="status">{message}</p>}
