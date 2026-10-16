@@ -1,14 +1,4 @@
-# Publishes the browser-only demo to GitHub Pages: https://duartesantos8.github.io/openGym/
-#
-# Dormant from 2026-08-19 to 2026-09-10 while the GitHub account was suspended; live again since.
-# The same build (same command, Vite's base is './') is also served from the project's own site at
-# https://opengym.ch/demo/, so the demo has two addresses with identical content.
-#
-# Pages serves static files only, so this build has no backend — VITE_DEMO=1 makes the app
-# boot straight into guest mode with a seeded example history (see frontend/src/lib/demo.js).
-# The exercise stills and animations (180 px) come from catalogue/media and are staged next to
-# the build by scripts/catalogue/stage-media.mjs, so the demo serves them from its own origin.
-name: Deploy standalone openGym Web PWA
+name: Deploy openGym Web PWA
 
 on:
   push:
@@ -33,23 +23,36 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22'
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-      - run: npm ci
+      - name: Install frontend
         working-directory: frontend
-      - run: npm run build
+        run: npm ci
+      - name: Build standalone PWA
         working-directory: frontend
         env:
           VITE_MOBILE: '1'
           VITE_WEB_LOCAL: '1'
-      # The 180 px stills and animations from catalogue/media, served next to the demo
-      - run: node scripts/catalogue/stage-media.mjs frontend/dist
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
+        run: npm run build
+      - name: Bundle exercise media
+        run: node scripts/catalogue/stage-media.mjs frontend/dist
+      - name: Verify published output
+        run: |
+          test -s frontend/dist/index.html
+          test -s frontend/dist/manifest.json
+          test -s frontend/dist/sw.js
+          grep -q 'id="root"' frontend/dist/index.html
+          grep -q 'assets/' frontend/dist/index.html
+          if grep -qi 'self-hosted gym and body-weight tracker you actually own' frontend/dist/index.html; then
+            echo 'ERROR: README was published instead of the React application'
+            exit 1
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist
 
@@ -58,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deploy
-        uses: actions/deploy-pages@v5
+      - id: deployment
+        uses: actions/deploy-pages@v4
